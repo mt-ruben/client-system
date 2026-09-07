@@ -3,12 +3,31 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.tokens import RefreshToken
+from drf_spectacular.utils import extend_schema
+from rest_framework import serializers
+
+class LogoutResponseSerializer(serializers.Serializer):
+    mensaje = serializers.CharField()
 
 
+class LogoutErrorSerializer(serializers.Serializer):
+    error = serializers.CharField()
 class LogoutAPIView(APIView):
 
     permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
+    @extend_schema(
+        summary="Cerrar sesión",
+        description="Invalida el Refresh Token del usuario y finaliza su sesión.",
+        request=None,
+        responses={
+            205: LogoutResponseSerializer,
+            400: LogoutErrorSerializer,
+            
+        },
+    )
     def post(self, request):
 
         try:

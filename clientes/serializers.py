@@ -7,6 +7,7 @@ from .services import (
     cancelar_pedido,
     cambiar_estado_pedido
 )
+from drf_spectacular.utils import extend_schema_field, OpenApiTypes
 class ClienteSerializer(serializers.ModelSerializer):
 
     email = serializers.EmailField(
@@ -114,6 +115,7 @@ class DetallePedidoSerializer(serializers.ModelSerializer):
             'precio',
             'subtotal'
         ]
+    @extend_schema_field(OpenApiTypes.NUMBER)
 
     def get_subtotal(self, obj):
 
@@ -164,8 +166,8 @@ class PedidoSerializer(serializers.ModelSerializer):
             'estado'
         ]
 
+    @extend_schema_field(ClienteResumenSerializer)
     def get_cliente_detalle(self, obj):
-
         return ClienteResumenSerializer(
             obj.cliente
         ).data
@@ -336,3 +338,29 @@ class CambiarEstadoPedidoSerializer(serializers.Serializer):
             (Pedido.ENTREGADO, 'Entregado'),
         ]
     )
+
+class ErrorResponseSerializer(serializers.Serializer):
+    detail = serializers.CharField()
+class ValidationErrorResponseSerializer(serializers.Serializer):
+    errors = serializers.DictField(
+        child=serializers.ListField(
+            child=serializers.CharField()
+        )
+    )
+class ProductoListaPaginadaSerializer(serializers.Serializer):
+    count = serializers.IntegerField()
+    next = serializers.URLField(allow_null=True)
+    previous = serializers.URLField(allow_null=True)
+    results = ProductoListaSerializer(many=True)
+
+class PedidoListaPaginadaSerializer(serializers.Serializer):
+    count = serializers.IntegerField()
+    next = serializers.URLField(allow_null=True)
+    previous = serializers.URLField(allow_null=True)
+    results = PedidoSerializer(many=True)
+
+class ClienteListaPaginadaSerializer(serializers.Serializer):
+    count = serializers.IntegerField()
+    next = serializers.URLField(allow_null=True)
+    previous = serializers.URLField(allow_null=True)
+    results = ClienteSerializer(many=True)

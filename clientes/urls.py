@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import ListaClientes,RegistrarClientes,EditarCliente,EliminarCliente,ClienteAPIView,ClienteDetalleAPIView,ClienteDetalleGenericoAPIView,ClienteGenericoAPIView,ClienteViewSet,ProductoListaAPIView,ProductoDetalleAPIView,ProductoActualizarAPIView,ProductoEliminarAPIView,ProductoListaCrearAPIView
 from rest_framework.routers import DefaultRouter
-
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from .views import (
     ClienteViewSet,
     PedidoViewSet,
@@ -29,7 +29,8 @@ router.register(
     basename='producto'
 )
 urlpatterns = [
-   
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),   
     path('cliente_list/', ListaClientes.as_view(), name='cliente_list'),
     path('crear/', RegistrarClientes.as_view(), name='crear_cliente'),
     path('editar/<int:pk>', EditarCliente.as_view(), name='editar_cliente'),

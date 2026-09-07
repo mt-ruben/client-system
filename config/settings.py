@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     'clientes',
     'django_filters',
+    'drf_spectacular',
 ]
 
 MIDDLEWARE = [
@@ -170,6 +171,7 @@ MAILERS = {
 }
 from datetime import timedelta
 REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_PAGINATION_CLASS':
         'rest_framework.pagination.PageNumberPagination',
 
@@ -183,7 +185,11 @@ REST_FRAMEWORK = {
     ],
 }
 
-
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Sistema de Clientes API',
+    'DESCRIPTION': 'API REST para la gestión de clientes, productos y pedidos.',
+    'VERSION': '1.0.0',
+}
 SIMPLE_JWT = {
 
     'ACCESS_TOKEN_LIFETIME':
