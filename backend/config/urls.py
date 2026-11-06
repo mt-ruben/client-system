@@ -16,25 +16,37 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include,path
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
+from .views import (
+    LoginAPIView,
+    RefreshTokenAPIView,
+    LogoutAPIView,
+    CSRFCookieAPIView,
 )
-from .views import LogoutAPIView
-
 urlpatterns = [
     path(
         'api/token/',
-        TokenObtainPairView.as_view(),
+        LoginAPIView.as_view(),
         name='token_obtain_pair'
     ),
 
     path(
         'api/token/refresh/',
-        TokenRefreshView.as_view(),
+        RefreshTokenAPIView.as_view(),
         name='token_refresh'
     ),
+
     path('admin/', admin.site.urls),
+
     path('', include('clientes.urls')),
-    path('api/logout/',LogoutAPIView.as_view(), name='logout'),
+
+    path(
+        'api/logout/',
+        LogoutAPIView.as_view(),
+        name='logout'
+    ),
+    path(
+    'api/csrf/',
+    CSRFCookieAPIView.as_view(),
+    name='csrf_cookie'
+    ), 
 ]

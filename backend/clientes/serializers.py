@@ -39,9 +39,6 @@ class ClienteSerializer(serializers.ModelSerializer):
 
     def validate_telefono(self, value):
 
-        print("VALOR RECIBIDO:", repr(value))
-        print("TIPO:", type(value))
-
         if value == "":
             return value
 
@@ -59,8 +56,15 @@ class ClienteSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
 
-        estado = data.get('estado')
-        telefono = data.get('telefono')
+        estado = data.get(
+            'estado',
+            self.instance.estado if self.instance else True
+        )
+
+        telefono = data.get(
+            'telefono',
+            self.instance.telefono if self.instance else ''
+        )
 
         if estado is True and not telefono:
             raise serializers.ValidationError(

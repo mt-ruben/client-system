@@ -1,8 +1,31 @@
+﻿# Variables de entorno y secretos
 .env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+venv/
+.venv/
+
+# Django
 db.sqlite3
 staticfiles/
-__pycache__/
-venv/
-datos_sqlite.json
-datos_migracion.json
-*.pyc
+
+# Cobertura y pruebas
+.coverage
+htmlcov/
+cookies.txt
+
+# Node.js
+node_modules/
+dist/
+dist-ssr/
+
+# Archivos temporales
+*.log
+
+# Editores
+.vscode/
+.idea/

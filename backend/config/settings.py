@@ -23,16 +23,26 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('SECRET_KEY')
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
+
+if not SECRET_KEY:
+    raise RuntimeError(
+        'La variable SECRET_KEY no está configurada.'
+    )
+SECURE_COOKIES = os.getenv('SECURE_COOKIES', 'False') == 'True'
+
+SESSION_COOKIE_SECURE = SECURE_COOKIES
+CSRF_COOKIE_SECURE = SECURE_COOKIES
 SECURE_SSL_REDIRECT = os.getenv('SECURE_SSL_REDIRECT', 'False') == 'True'
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-SECURE_HSTS_SECONDS = 3600
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False').lower() in (
     'true',
     '1',
     'yes'
+)
+SECURE_HSTS_SECONDS = int(
+    os.getenv('SECURE_HSTS_SECONDS', '0')
 )
 ALLOWED_HOSTS = [
     host.strip()
@@ -45,6 +55,7 @@ if os.getenv('RENDER_EXTERNAL_HOSTNAME'):
 # Application definition
 
 INSTALLED_APPS = [
+    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -61,6 +72,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -180,6 +192,9 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
        
     ),
+    'DEFAULT_PERMISSION_CLASSES': [
+    'rest_framework.permissions.IsAuthenticated',
+    ],
         'DEFAULT_FILTER_BACKENDS': [
         'django_filters.rest_framework.DjangoFilterBackend',
     ],
@@ -193,12 +208,22 @@ SPECTACULAR_SETTINGS = {
 SIMPLE_JWT = {
 
     'ACCESS_TOKEN_LIFETIME':
-        timedelta(days=1),
+        timedelta(minutes=10),
 
     'REFRESH_TOKEN_LIFETIME':
-        timedelta(days=1),
+        timedelta(days=7),
 
     'ROTATE_REFRESH_TOKENS': True,
 
     'BLACKLIST_AFTER_ROTATION': True,
 }
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+]
+CORS_ALLOW_CREDENTIALS = True
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+]

@@ -1,0 +1,26 @@
+.env
+db.sqlite3
+staticfiles/
+__pycache__/
+venv/
+datos_sqlite.json
+datos_migracion.json
+*.pyc
+# Cobertura de pruebas
+.coverage
+htmlcov/
+
+# Configuración local de editores
+.vscode/
+.idea/
+
+# Archivos temporales
+*.log
+
+
+
+# Archivos sensibles de pruebas
+cookies.txt
+
+# Dependencias de Node.js
+node_modules/
