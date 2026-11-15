@@ -34,6 +34,16 @@ export default function Navbar() {
 
         <button
           type="button"
+          className="btn btn-outline-primary btn-sm ms-3"
+          onClick={() => navigate('/cambiar-password')}
+          title="Cambiar contraseña"
+        >
+          <i className="bi bi-key me-1"></i>
+          Cambiar contraseña
+        </button>
+
+        <button
+          type="button"
           className="btn btn-outline-danger btn-sm ms-3"
           onClick={handleLogout}
           title="Cerrar sesión"

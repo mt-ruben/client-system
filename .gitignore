@@ -8,6 +8,7 @@ __pycache__/
 *.py[cod]
 venv/
 .venv/
+.venv.example
 
 # Django
 db.sqlite3

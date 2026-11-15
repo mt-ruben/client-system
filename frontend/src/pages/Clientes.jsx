@@ -66,7 +66,7 @@ export default function Clientes() {
 
       const datos = await apiRequest(
 
-        `/clientes/?${parametros.toString()}`
+        `/api/clientes/?${parametros.toString()}`
       )
 
       setClientes(datos.results ?? [])

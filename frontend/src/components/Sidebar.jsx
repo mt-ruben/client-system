@@ -5,6 +5,7 @@ const enlaces = [
   { to: '/', label: 'Dashboard', icon: 'bi-grid-1x2-fill', end: true },
   { to: '/clientes', label: 'Clientes', icon: 'bi-people-fill' },
   { to: '/productos', label: 'Productos', icon: 'bi-box-seam-fill' },
+  { to: '/usuarios', label: 'Usuarios', icon: 'bi-people-fill' },
   { to: '/pedidos', label: 'Pedidos', icon: 'bi-cart-fill' },
 ]
 

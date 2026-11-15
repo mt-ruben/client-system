@@ -1,16 +1,46 @@
 
 import API_URL from "../config";
 
+const TOKEN_STORAGE_KEY = "sistema_clientes_access_token";
 
-// El access token permanece únicamente en memoria.
+// El access token permanece en memoria y en sessionStorage (persiste al hacer F5,
+// pero se limpia al cerrar el navegador o la pestaña).
 let accessToken = null;
 let restorePromise = null;
+
+function loadTokenFromStorage() {
+    try {
+        const stored = sessionStorage.getItem(TOKEN_STORAGE_KEY);
+        if (stored) {
+            accessToken = stored;
+        }
+    } catch {
+        // sessionStorage no disponible o error de lectura.
+    }
+}
+
+loadTokenFromStorage();
+
 export function getAccessToken() {
     return accessToken;
 }
 
 export function setAccessToken(token) {
     accessToken = token;
+
+    if (token) {
+        try {
+            sessionStorage.setItem(TOKEN_STORAGE_KEY, token);
+        } catch {
+            // sessionStorage no disponible.
+        }
+    } else {
+        try {
+            sessionStorage.removeItem(TOKEN_STORAGE_KEY);
+        } catch {
+            // sessionStorage no disponible.
+        }
+    }
 }
 
 export async function login(username, password) {

@@ -6,6 +6,9 @@ import {
   Navigate,
 } from 'react-router-dom'
 import Clientes from './pages/Clientes'
+import Productos from './pages/Productos'
+import Usuarios from './pages/Usuarios'
+import CambiarPassword from './pages/CambiarPassword'
 import AdminLayout from './layouts/AdminLayout'
 import Dashboard from './pages/Dashboard'
 import Login from './pages/Login'
@@ -37,7 +40,15 @@ export default function App() {
             />
             <Route
               path="/productos"
-              element={<ModuloPendiente titulo="Productos" />}
+              element={<Productos />}
+            />
+            <Route
+              path="/usuarios"
+              element={<Usuarios />}
+            />
+            <Route
+              path="/cambiar-password"
+              element={<CambiarPassword />}
             />
             <Route
               path="/pedidos"

@@ -8,6 +8,7 @@ export default function ProtectedRoute() {
 
   useEffect(() => {
     async function checkSession() {
+      // Si ya hay un access token (en memoria o sessionStorage), se considera autenticado.
       if (getAccessToken()) {
         setAuthenticated(true)
         setLoading(false)
