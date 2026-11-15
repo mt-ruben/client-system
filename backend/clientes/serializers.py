@@ -251,45 +251,6 @@ class PedidoSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         return actualizar_pedido(instance, validated_data)
-    @transaction.atomic
-    def actualizar_pedido(instance, validated_data):
-
-        instance = Pedido.objects.select_for_update().get(
-            pk=instance.pk
-        )
-
-        detalles_data = validated_data.pop('detalles', None)
-
-        for attr, value in validated_data.items():
-            setattr(instance, attr, value)
-
-    @transaction.atomic
-    def cancelar_pedido(instance):
-
-        instance = Pedido.objects.select_for_update().get(
-            pk=instance.pk
-        )
-
-        if instance.estado in [
-            Pedido.ENVIADO,
-            Pedido.ENTREGADO
-        ]:
-            raise serializers.ValidationError({
-                'estado':
-                f'El pedido no puede cancelarse porque '
-                f'está en estado "{instance.estado}".'
-            })
-
-        if instance.estado == Pedido.CANCELADO:
-            raise serializers.ValidationError({
-                'estado':
-                'El pedido ya está cancelado.'
-            })
-        detalles = (
-            instance.detalles
-            .select_related('producto')
-            .all()
-        )
 class ProductoCrearSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -315,6 +276,7 @@ class ProductoListaSerializer(serializers.ModelSerializer):
             'id',
             'nombre',
             'precio',
+            'stock',
             'estado'
         ]
 
@@ -331,6 +293,7 @@ class ProductoActualizarSerializer(serializers.ModelSerializer):
         fields = [
             'nombre',
             'precio',
+            'stock',
             'estado'
         ]
 class CambiarEstadoPedidoSerializer(serializers.Serializer):

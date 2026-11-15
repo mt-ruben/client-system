@@ -233,15 +233,6 @@ class ClienteViewSet(ModelViewSet):
     
 
     
-class ClienteDetalleGenericoAPIView(RetrieveUpdateDestroyAPIView):
-
-    queryset = Cliente.objects.all()
-
-    serializer_class = ClienteSerializer
-
-    permission_classes = [IsAuthenticated]
-
-
 from .services import (
     cancelar_pedido,
     cambiar_estado_pedido
@@ -610,11 +601,13 @@ class ProductoViewSet(ModelViewSet):
     queryset = Producto.objects.all()
     serializer_class = ProductoSerializer
     filter_backends = [
+        SearchFilter,
         DjangoFilterBackend,
         OrderingFilter,
     ]
 
     filterset_class = ProductoFilter
+    search_fields = ['nombre']
     ordering_fields = [
         'nombre',
         'precio',

@@ -6,6 +6,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from drf_spectacular.utils import extend_schema
 from rest_framework_simplejwt.serializers import TokenRefreshSerializer
+from django.contrib.auth.models import User
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_protect
 from rest_framework.permissions import IsAuthenticated
@@ -13,8 +14,64 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import TokenError
 from django.conf import settings
 from django.views.decorators.csrf import ensure_csrf_cookie
+from rest_framework_simplejwt.exceptions import TokenError
+from config.token_utils import obtener_huella_password
+import secrets
+
 class LoginSerializer(TokenObtainPairSerializer):
-    pass
+
+    def validate(self, attrs):
+        data = super().validate(attrs)
+
+        if not self.user.is_active:
+            raise serializers.ValidationError({
+                'detail': 'El usuario está desactivado. No puede iniciar sesión.'
+            })
+
+        huella = obtener_huella_password(self.user)
+
+        refresh = RefreshToken(data['refresh'])
+        refresh['password_version'] = huella
+
+        data['refresh'] = str(refresh)
+        data['access'] = str(refresh.access_token)
+
+        return data
+
+
+class CustomTokenRefreshSerializer(TokenRefreshSerializer):
+
+    def validate(self, attrs):
+        try:
+            refresh = RefreshToken(attrs['refresh'])
+            user_id = refresh.payload.get('user_id')
+            user = User.objects.get(pk=user_id)
+
+        except (TokenError, User.DoesNotExist):
+            raise serializers.ValidationError({
+                'detail': 'La sesión de renovación no es válida.'
+            })
+
+        if not user.is_active:
+            raise serializers.ValidationError({
+                'detail': 'El usuario está desactivado. No puede renovar la sesión.'
+            })
+
+        version_token = refresh.get('password_version')
+        huella_actual = obtener_huella_password(user)
+
+        if (
+            not version_token
+            or not secrets.compare_digest(
+                str(version_token),
+                huella_actual
+            )
+        ):
+            raise serializers.ValidationError({
+                'detail': 'La sesión no es válida. Inicia sesión nuevamente.'
+            })
+
+        return super().validate(attrs)
 
 
 class LoginResponseSerializer(serializers.Serializer):
@@ -146,7 +203,7 @@ class RefreshTokenAPIView(APIView):
                 status=status.HTTP_401_UNAUTHORIZED,
             )
 
-        serializer = TokenRefreshSerializer(
+        serializer = CustomTokenRefreshSerializer(
             data={"refresh": refresh_token}
         )
 

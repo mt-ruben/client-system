@@ -49,4 +49,8 @@ urlpatterns = [
     CSRFCookieAPIView.as_view(),
     name='csrf_cookie'
     ), 
+    path(
+    'api/usuarios/',
+    include('usuarios.urls')
+),
 ]
